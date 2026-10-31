@@ -1,0 +1,24 @@
+openvino_detector_node:
+  ros__parameters:
+    # YOLOv5n, 416 x 416, five classes of the YCB set (tennis_ball, apple,
+    # orange, banana, mustard_bottle), exported to ONNX (opset 12); the class
+    # names come from the metadata of the ONNX file. The launch argument
+    # model:=<path> overrides model_path.
+    model_path: ""
+    # GPU: the integrated GPU of the host (OpenVINO GPU plugin,
+    # intel-opencl-icd); the node falls back to CPU, and says so, if the GPU
+    # cannot be used.
+    device: "GPU"
+    default_threshold: 0.5
+    # per-class thresholds, "name:threshold,name:threshold" (empty: the default)
+    class_thresholds: ""
+    nms_iou: 0.45
+    input_topic: "/camera/camera/color/image_raw"
+    output_topic: "/detections"
+    # minimum time between the starts of two detections; 0.0: every newest frame
+    process_period_sec: 0.0
+    publish_empty_detections: true
+    log_period_sec: 5.0
+    # metrics (launch metrics:=true sets the path): one row per frame
+    metrics_csv_path: ""
+    metrics_duration_sec: 0.0

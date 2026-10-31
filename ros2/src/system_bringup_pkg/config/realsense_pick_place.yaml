@@ -1,0 +1,33 @@
+# Hardware-reset the camera at node startup: it clears a stale state of the
+# USB video interface left by an earlier stall or a hard reboot (color frames
+# stopping while depth keeps streaming).
+initial_reset: true
+enable_color: true
+enable_depth: true
+# enable_sync: librealsense pairs each color frame with the depth frame
+# captured at the same instant and ships them as one frameset, so that the
+# depth the 3-D stage uses carries the SAME timestamp as the color frame the
+# bbox came from (the skew between them fell from about 30 ms to about 4 ms,
+# for a small CPU cost and no added latency). It needs depth at the same rate
+# as color (depth_profile below). Sync alone is not enough: the 3-D node must
+# also SELECT the partner frame (pick_target_3d_node.nearest_by_stamp).
+enable_sync: true
+# Stays OFF: the full-frame alignment saturates the single-threaded camera node
+# and adds hundreds of ms of queueing before the detector, for no accuracy
+# gain; the 3-D node projects the bbox center into the raw depth image instead.
+align_depth.enable: false
+enable_rgbd: false
+pointcloud.enable: false
+colorizer.enable: false
+enable_infra: false
+enable_infra1: false
+enable_infra2: false
+enable_gyro: false
+enable_accel: false
+# Color at 848x480 (30 fps): at 1280x720 the camera node could stall after
+# about a minute; the detector resizes every frame before inference anyway, so
+# the lower resolution does not reduce detection quality, and it cuts the USB3
+# bandwidth. Both streams are 16:9. Depth at the rate of color, so that
+# enable_sync can pair every color frame.
+depth_module.depth_profile: 848x480x30
+rgb_camera.color_profile: 848x480x30

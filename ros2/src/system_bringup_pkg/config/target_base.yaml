@@ -1,0 +1,28 @@
+pick_target_base_node:
+  ros__parameters:
+    input_topic: /pick_target_3d
+    output_topic: /pick_target_base
+    target_frame: base_link
+    transform_timeout_sec: 0.2
+
+    require_depth_valid: true
+
+    # Camera-frame Z gate. NOTE: this tests the OPTICAL-AXIS z component
+    # (what the depth image stores), not the euclidean range to the point.
+    #
+    # min 0.20: the D435i at 848x480 returns no depth below about 0.195 m.
+    #
+    # max 0.95: the workspace box of the goals (APP_GOAL_BOX_M of
+    #   indy7/INDY7.cfg) seen through the transform base_link -> camera of the
+    #   launch file reaches at most about 0.86-0.93 m along the optical axis;
+    #   +0.05 m covers the residual of the hand-eye calibration and the depth
+    #   noise. A larger gate would pass readings below the table as valid.
+    #   Unlike max_depth_m of target_3d.yaml, tightening THIS is safe: it is a
+    #   pure post-hoc filter, and a reject is logged with the measured z
+    #   (reason camera_z_too_far). Re-derive it if the camera is remounted or
+    #   the box grows.
+    min_camera_z_m: 0.20
+    max_camera_z_m: 0.95
+
+    publish_invalid_targets: true
+    log_period_sec: 1.0

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>system_bringup_pkg</name>
+  <version>0.1.0</version>
+  <description>Launch and configuration of the camera pipeline (RealSense, OpenVINO detector, pick logic, 3-D target)</description>
+  <maintainer email="ubuntu@todo.todo">ubuntu</maintainer>
+  <license>MIT</license>
+
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>realsense2_camera</exec_depend>
+  <exec_depend>openvino_detector_pkg</exec_depend>
+  <exec_depend>pick_logic_pkg</exec_depend>
+  <exec_depend>target_3d_pkg</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>rmw_fastrtps_cpp</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

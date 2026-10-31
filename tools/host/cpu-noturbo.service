@@ -1,0 +1,10 @@
+[Unit]
+Description=Turbo off, the real-time core at the largest non-turbo ratio (tools/host/cpu-noturbo.sh)
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/cpu-noturbo.sh
+
+[Install]
+WantedBy=multi-user.target

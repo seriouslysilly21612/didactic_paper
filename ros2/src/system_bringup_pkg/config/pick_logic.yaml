@@ -1,0 +1,44 @@
+pick_logic_node:
+  ros__parameters:
+    input_topic: /detections
+    output_topic: /pick_target
+
+    min_confidence: 0.3
+
+    # the five classes of the experiments
+    allowed_classes:
+      - "apple"
+      - "orange"
+      - "banana"
+      - "tennis_ball"
+      - "mustard_bottle"
+
+    # Must match rgb_camera.color_profile in realsense_pick_place.yaml.
+    # The detector returns bbox coordinates in the source (camera) resolution,
+    # so the edge/area filters below depend on these dimensions.
+    image_width: 848
+    image_height: 480
+    edge_margin_px: 30
+
+    min_bbox_area_px: 400.0
+    max_bbox_area_ratio: 0.5
+
+    # desired_class: a LIVE parameter, required; '': nothing selected, every
+    # target invalid (reason no_class_selected). The object menu of the
+    # controller ('p') sets it at run time:
+    #   ros2 param set /pick_logic_node desired_class apple
+    # Without the controller: the launch argument desired_class:=apple.
+    desired_class: ""
+    # Taken: the highest confidence of that class; valid after
+    # stability_min_frames consecutive frames, then kept (sticky): no switch to
+    # a better candidate, released only after more than lost_timeout_frames
+    # consecutive frames without it. Continuation: the nearest candidate; the
+    # distance gate stability_match_px only when two or more of the class are
+    # in view (with one, it is found again at once after an occlusion). Why two
+    # or more are defined: pick_logic.py, _update_track.
+    stability_min_frames: 3
+    stability_match_px: 60.0
+    lost_timeout_frames: 5
+
+    publish_invalid_targets: true
+    log_period_sec: 1.0

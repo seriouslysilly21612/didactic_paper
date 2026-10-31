@@ -1,0 +1,35 @@
+pick_target_3d_node:
+  ros__parameters:
+    pick_target_topic: /pick_target
+    # Raw (unaligned) depth + intrinsics + depth->color extrinsics.
+    # The node reverse-projects only the bbox-center pixel, so full-frame
+    # align_depth is not needed (keep align_depth.enable: false).
+    depth_topic: /camera/camera/depth/image_rect_raw
+    depth_info_topic: /camera/camera/depth/camera_info
+    color_info_topic: /camera/camera/color/camera_info
+    extrinsics_topic: /camera/camera/extrinsics/depth_to_color
+    output_topic: /pick_target_3d
+
+    depth_scale_16uc1: 0.001
+    patch_radius: 4
+    # The epipolar segment is about fx*baseline*(1/min - 1/max) long,
+    # dominated by min.
+    #
+    # min 0.19: the D435i at 848x480 returns no depth below about 0.195 m.
+    #
+    # max 1.6: deliberately WIDER than the 0.95 gate of target_base.yaml.
+    #   Narrowing this one changes WHAT IS FOUND, not just what is accepted:
+    #   it masks epipolar candidates and re-tests the patch median, and the
+    #   match is a bare argmin without a reprojection-error threshold, so a
+    #   masked-out true correspondence does not fail but returns the least-bad
+    #   survivor. Kept wide, a reading in (0.95, 1.6] reaches pick_target_base
+    #   and is rejected there by name with its measured z (camera_z_too_far).
+    #   Tighten only together with a reprojection-error reject.
+    #
+    # Widen BOTH together with target_base.yaml if the workspace grows.
+    min_depth_m: 0.19
+    max_depth_m: 1.6
+    log_period_sec: 1.0
+    # Cross-check of the vectorized epipolar search against the loop
+    # reference (costs the loop again); off.
+    epipolar_ab_check: false

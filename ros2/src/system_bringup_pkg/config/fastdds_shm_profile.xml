@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FastDDS same-host SHM profile for the camera pipeline.
+     All nodes of the pipeline run on one host; 848x480 images (1.22 MB) at
+     30 Hz over UDP loopback cost two copies and system calls per message.
+     The SHM transport moves them through a shared-memory segment instead.
+     segment_size must exceed the largest message: the default 512 KB is too
+     small for an Image, hence 16 MB.
+
+     Use: nothing to do - pick_place_openvino.launch.py points
+     FASTRTPS_DEFAULT_PROFILES_FILE at the installed copy of this file
+     (FindPackageShare) and sets RMW_IMPLEMENTATION=rmw_fastrtps_cpp.
+
+     To use it outside the launch file (a standalone node, a benchmark):
+       export FASTRTPS_DEFAULT_PROFILES_FILE=$(ros2 pkg prefix system_bringup_pkg)/share/system_bringup_pkg/config/fastdds_shm_profile.xml
+     (all participants must use the same RMW to communicate) -->
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <transport_descriptors>
+    <transport_descriptor>
+      <transport_id>shm_big</transport_id>
+      <type>SHM</type>
+      <segment_size>16777216</segment_size>
+    </transport_descriptor>
+    <transport_descriptor>
+      <transport_id>udp_fallback</transport_id>
+      <type>UDPv4</type>
+    </transport_descriptor>
+  </transport_descriptors>
+  <participant profile_name="shm_participant" is_default_profile="true">
+    <rtps>
+      <userTransports>
+        <transport_id>shm_big</transport_id>
+        <transport_id>udp_fallback</transport_id>
+      </userTransports>
+      <useBuiltinTransports>false</useBuiltinTransports>
+    </rtps>
+  </participant>
+</profiles>
